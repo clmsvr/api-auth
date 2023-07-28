@@ -1,0 +1,28 @@
+## Java Keytool
+## https://en.m.wikipedia.org/wiki/Java_KeyStore
+## Gera um arquivo de keystore com a chave privada e um certificado com a chave publica.
+keytool -genkeypair -alias authserver -keyalg RSA -keysize 4096 -keystore authserver.jks -validity 3650 -storepass authserver
+
+-keypass : senha do par de chaves
+-storepass: senha do keystore file
+-validity 3650 : (10 anos)validade em dias.
+
+Outros comandos:
+keytool -genKeypair --help
+keytool -list -keystore authserver.jks
+keytool -export -rfc -alias authserver -keystore authserver.jks -file authserver-cert.pem
+# so exporta a chave publica. Não tem funcionalidade para exportar a chave privada.
+
+## retirar a chave publica do certificado
+openssl x509 -pubkey -noout -in authserver-cert.pem > authserver-pkey.pem
+
+ cat authserver.jks | base64 -w 0
+ 
+
+# Convertendo PKCS#12 (.p12 ou .pfx) em um KeyStore Java JKS 	
+# https://www.helviojunior.com.br/it/convertendo-pkcs12-p12-ou-pfx-em-um-keystore-java-jks/
+# https://en.m.wikipedia.org/wiki/PKCS 
+keytool -importkeystore -srckeystore mykeystore.p12 -destkeystore clientcert.jks -srcstoretype pkcs12 -deststoretype JKS -srcstorepass mystorepass -deststorepass myotherstorepass -srcalias myserverkey -destalias myotherserverkey -srckeypass mykeypass -destkeypass myotherkeypass
+
+# Caso necessite você pode listar o certificado do KeyStore com o comando:
+keytool -v -list -keystore mykeystore.p12
